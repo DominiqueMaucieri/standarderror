@@ -8,6 +8,8 @@
 #' @export
 #'
 #' @examples
+#' #' std_err(x = c(4, 7, 2, 7, 5, 9))
+#'
 std_err <- function(x){
 
   x.std.err <- sd(x) / sqrt(length(x))

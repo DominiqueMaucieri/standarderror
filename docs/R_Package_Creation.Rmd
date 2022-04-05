@@ -166,5 +166,39 @@ std_err <- function(x){
 
 ```
 
+Now this is only the function, there is no associated information about the elements of this function, like what x is. To add this extra information in, you need to have your cursor within the function you are working on, then select Code>Insert Roxygen Skeleton. Now you just have to fill it in. For std_err() we will fill in the documentation like:
+
+```{r roxygen skeleton, eval = FALSE}
+
+#' @title Calculate standard error
+#' @description Using a vector of samples, calculate the standard error of the
+#'     mean.
+#'
+#' @param x A vector of numerical data.
+#'
+#' @return A numeric value.
+#' @export
+#'
+#' @examples
+#' #' std_err(x = c(4, 7, 2, 7, 5, 9))
+#'
+std_err <- function(x){
+
+  x.std.err <- sd(x) / sqrt(length(x))
+
+  return(x.std.err)
+
+}
+
+```
+
+When filling out this documentation, you should keep each row around 80 characters long. After that you will have to manual hit return and continue writing on a new line. When you start a new line, there needs to be 4 spaces at the start which will make sure when we build this documentation manual, it knows that this line is a continuation of the previous one. You can see this in the description. How to know when 80 characters is? I it is not already there, you can add a margin line at 80 characters by going to Preferences > Code > Display > Show Margin. 
+
+Additionally when adding examples, you can add as many as you want, ensuring the code will work and run without warnings. If you want to include code with errors, you can wrap it with `\dontrun{     }`
+
+
+
+
+
 
 
