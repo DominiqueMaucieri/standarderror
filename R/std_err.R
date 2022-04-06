@@ -12,7 +12,7 @@
 #'
 std_err <- function(x){
 
-  x.std.err <- sd(x) / sqrt(length(x))
+  x.std.err <- stats::sd(x) / sqrt(length(x))
 
   return(x.std.err)
 

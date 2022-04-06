@@ -132,7 +132,8 @@ Package: standarderror \newline
 Title: Calculation of Standard Error \newline
 Version: 0.0.0.9000 \newline
 Authors@R:  \newline
-person("Dominique", "Maucieri" , "dominiquemaucieri@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1849-2472")) \newline
+person("Dominique", "Maucieri", role = c("aut", "cre"), email = "dominiquemaucieri@gmail.com",
+           comment = c(ORCID = "0000-0003-1849-2472")) \newline
 Description: This package will aid in calculation of the standard error of means. \newline
 License: MIT + file LICENSE \newline
 Encoding: UTF-8 \newline
@@ -166,6 +167,9 @@ std_err <- function(x){
 
 ```
 
+
+## Function Documentation
+
 Now this is only the function, there is no associated information about the elements of this function, like what x is. To add this extra information in, you need to have your cursor within the function you are working on, then select Code>Insert Roxygen Skeleton. Now you just have to fill it in. For std_err() we will fill in the documentation like:
 
 ```{r roxygen skeleton, eval = FALSE}
@@ -196,9 +200,76 @@ When filling out this documentation, you should keep each row around 80 characte
 
 Additionally when adding examples, you can add as many as you want, ensuring the code will work and run without warnings. If you want to include code with errors, you can wrap it with `\dontrun{     }`
 
+## Package Dependancies
+
+Sometimes you may want to use a functions that already exist from other packages within your functions. Be cautious on how many and which ones you use as your code will rely on other peoples code. It is a good idea to get into the habit of specifying the package that every function you use in your code is from. So for `std_err()` both the `sqrt()` and `length()` functions are from base R, however, `sd()` is from the stats package. While the stats package is considered a base package as well, it is a good idea to still specify that you are using `stats::sd()` within your function. 
+
+```{r roxygen skeleton with package, eval = FALSE}
+
+#' @title Calculate standard error
+#' @description Using a vector of samples, calculate the standard error of the
+#'     mean.
+#'
+#' @param x A vector of numerical data.
+#'
+#' @return A numeric value.
+#' @export
+#'
+#' @examples
+#' #' std_err(x = c(4, 7, 2, 7, 5, 9))
+#'
+std_err <- function(x){
+
+  x.std.err <- stats::sd(x) / sqrt(length(x))
+
+  return(x.std.err)
+
+}
+
+```
+
+For other packages that are not base packages, you will have to add a dependency. There are a few different types, the most common are "Suggests" and "Imports". 
+
+- Suggests will be for packages or functions that are optional
+
+  * only used in a single function
+  * only used in vignettes
+  
+- Imports will be for packages or functions that are not optional for the working of you package
+
+For example if you wanted to use the dplyr package with your functions you would specify in your command line:
+
+```{r dependency, eval = FALSE}
+
+usethis::use_package("dplyr", type = "Imports")
+
+```
+
+And you would only have to do this one and it will be added to your DESCRIPTION file and available for use in your functions. After that any time you use a dplyr function just put `dplyr::` before the function name.
+
+One exception to this is if you want to use the pipe function `%>%`. This function has special documentation and you don't specify the package before you use the %>%, you just use it as is in your code. To be able to use it you must specify first and only once, into your console: 
+
+```{r pipe, eval = FALSE}
+
+usethis::use_pipe()
+
+```
+
+Now that adding packages and documentation to our function is done, you can run the following code in your console, to write the manual file and add your function to be exported to the NAMESPACE file.
+
+```{r document, eval = FALSE}
+
+devtools::document()
+
+```
+
+Now you will have a new folder in your package directory called man/ and within that there is an R Documentation file called std_err.Rd. This file is not editable by hand, to change it you have to change your documentation in the roxygen skeleton. If you select the preview button at the top of the .Rd file, you can view the manual for your function. This is the same information that would be available if you searched for the help on this function or typed `?std_err` into the console. 
 
 
+# Building the Package
 
+Now that we have a function that is properly documented, we can build this package and check it. There are a few ways to do this.
 
+1. My favorite, go Build
 
 
