@@ -19,7 +19,7 @@ install.packages(c("devtools", "roxygen2", "usethis", "testthat", "covr"))
 
 ```
 
-```{r load packages, warning = FALSE, message = FALSE}
+```{r load packages, eval = FALSE}
 
 library(devtools)
 library(roxygen2)
@@ -184,7 +184,7 @@ Now this is only the function, there is no associated information about the elem
 #' @export
 #'
 #' @examples
-#' #' std_err(x = c(4, 7, 2, 7, 5, 9))
+#' std_err(x = c(4, 7, 2, 7, 5, 9))
 #'
 std_err <- function(x){
 
@@ -216,7 +216,7 @@ Sometimes you may want to use a functions that already exist from other packages
 #' @export
 #'
 #' @examples
-#' #' std_err(x = c(4, 7, 2, 7, 5, 9))
+#' std_err(x = c(4, 7, 2, 7, 5, 9))
 #'
 std_err <- function(x){
 
@@ -266,10 +266,174 @@ devtools::document()
 Now you will have a new folder in your package directory called man/ and within that there is an R Documentation file called std_err.Rd. This file is not editable by hand, to change it you have to change your documentation in the roxygen skeleton. If you select the preview button at the top of the .Rd file, you can view the manual for your function. This is the same information that would be available if you searched for the help on this function or typed `?std_err` into the console. 
 
 
-# Building the Package
+# Does it all work?
 
-Now that we have a function that is properly documented, we can build this package and check it. There are a few ways to do this.
+Now that we have a function that is properly documented, we are probably wondering if the changes we have made work. There are a few different things you can do to examine your package. 
 
-1. My favorite, go Build
+```{r load_all, eval=FALSE}
+
+load_all()
+
+std_err(x = c(4, 7, 2, 7, 5, 9))
+
+```
+
+`load_all()` simulates building and installing your package. Once loaded you can use work through an example to check that package works.
+
+```{r check, eval=FALSE}
+
+check()
+
+```
+
+You should use `check()` often to ensure that there are no errors within your package. It is easier to fix issues when you know the exact code you changed that produced them, instead of having to work through an entire package to find the issue. At the end of the `check()` output, there will be a summary of errors, warnings and notes, the goal is to have 0. Sometimes there may be notes that you can not get rid of but try your best to eliminate them. We will discuss the testthat package in a moment, but when you use `check()` it will also run through all your tests to ensure your package work the way you intend it too as well.
+
+```{r install, eval=FALSE}
+
+install()
+
+```
+
+Finally, `install()` will build and install your package into your library, so that you can use it as you would with any package.
 
 
+# Function Tests
+
+Each function should have a test made for it, to ensure that while there are no errors with the code, that the code is actually doing what you think it is doing. For our example package we will create a tests for `std_err()` 
+
+```{r test creation, eval = FALSE}
+
+usethis::use_test("std_err")
+
+```
+
+Executing this code in the console will create a few things.
+
+1. Create new folders test/testthat/
+
+    * this folder will hold all your tests
+  
+2. Creates tests/testthat.R
+  
+    * this document will be run with each use of `check()` to check that all the tests work properly
+  
+    * you don't need to change this by hand as long as you create every test with `usethis::use_test()`
+  
+3. Creates tests/testthat/test-std_err.R
+
+    * this file we will edit to create the specific tests for the `std_err()`
+  
+ 
+Every new test .R file will start with the same code:
+
+```{r example with multiplication, eval = FALSE}
+
+test_that("multiplication works", {
+  expect_equal(2 * 2, 4)
+})
+
+```
+
+This is just an example test, as you can see there is nothing here that will test our function. We will change this so that we add in an example and test that the example will yield the result that we are expecting. My preference is to use the same example that I used in the package documentation, but you can do more or different examples, its up to you. You just want to make sure that you test all aspects or options within your function thoroughly. 
+
+Here is the test for `std_err()` work through the code to see if it makes sense to you and you see how we are testing it.
+
+```{r actual test, eval = FALSE}
+
+example_data <- c(4, 7, 2, 7, 5, 9)
+
+example_se <- std_err(x = example_data)
+
+expect_equal(example_se, 1.02198064778)
+
+```
+
+After creating and saving this test, you can test it with the following code:
+
+```{r conducting test, eval=FALSE}
+
+devtools::test()
+
+```
+
+This will tell you the status of all your function tests so you can make sure that all your functions are working just as you want them to.
+
+## Coverage
+
+How much of your code is being used in tests. This should be 100% currently as we only made one function and we wrote a test for it. As you continue to make functions, you want this to remain high so you will have to keep making more functions.Low coverage could mean you miss issues.
+
+```{r coverage, eval = FALSE}
+
+covr::package_coverage()
+
+```
+
+
+# Other aspects
+
+## Vignettes
+
+```{r vignette, eval=FALSE}
+
+usethis::use_vignette("vignette-name")
+
+```
+
+Using this code will create a vignette document, which is a form of long form documentation, kind of like a tutorial. You can use it to show the full functionality of your package or work through different examples. This code produced an .Rmd file which you can just edit to produce the vignette you want. 
+
+
+## GitHub
+
+If you are unfamiliar with GitHub, I recommend you look into it as it is a great way to share code and even packages. For example, as this package is on my GitHub, you can download this package (which is the same as using install.package() but for a package on GitHub) with:
+
+```{r GitHub, eval = FALSE}
+
+devtools::install_github("DominiqueMaucieri/standarderror")
+
+```
+
+Using GitHub is also a benefit as it can allow you to check other platforms with GitHub actions allowing for continuous integration and you can set GitHub to check your coverage. 
+
+## Package Website
+
+Once your package is on GitHub, a website can be nice to help people get oriented and familiar with your package. It is easy to set this up with pkgdown.
+
+```{r pkgdown, eval=FALSE}
+
+usethis::use_pkgdown_github_pages()
+
+```
+
+## Adding data
+
+Adding data can be helpful for your package as well, and if you want to do this it is something you should look into more. There are typically 3 steps to adding data to your package:
+
+1. Add raw data to a data-raw/ folder
+
+```{r raw data, eval=FALSE}
+
+usethis::use_data_raw("dataname")
+
+```
+
+2. Then you will either use that script to import data or create the data. After which you will save the raw data as data:
+
+```{r data, eval=FALSE}
+
+usethis::use_data(dataname, overwrite = TRUE)
+
+```
+
+3. Then you will need to add documentation for the data set. This differs from function documentation so take some time to familiarize yourself with how to do this. 
+
+
+Then once your package is built and installed, you will be able to load the data with:
+
+```{r load data, eval=FALSE}
+
+data("dataname")
+
+```
+
+
+And that is the basics and some future directions. There is a lot more information out there on creating packages so I hope this was able to inspire you and show you that you have the skills to be able to create a package.

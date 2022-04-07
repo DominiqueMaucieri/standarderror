@@ -17,6 +17,6 @@ Using a vector of samples, calculate the standard error of the
 mean.
 }
 \examples{
-#' std_err(x = c(4, 7, 2, 7, 5, 9))
+std_err(x = c(4, 7, 2, 7, 5, 9))
 
 }
